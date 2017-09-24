@@ -11,6 +11,7 @@ namespace ZorkTest
     class Program
     {
         static Dictionary<string, Room> rooms = new Dictionary<string, Room>();
+        static Dictionary<string, Thing> inventory = new Dictionary<string, Thing>();
 
         static void Describe(Room room)
         {
@@ -35,9 +36,10 @@ namespace ZorkTest
             rooms["First Room"].exits.Add(Direction.West, rooms["Start"]);
 
             // Contents
+            inventory.Add("POISON", new Item("Poison", "This is poison, it will kill you."));
+            inventory["POISON"].Description = "The label says it will errode metal";
             rooms["Start"].contents.Add("Second Room Key", new Key("Second Room Key", "It's a key to the Second Room."));
-            rooms["Second Room"].contents.Add("Poison", new Item("Poison", "This is poison, it will kill you."));
-            rooms["Second Room"].contents["Poison"].Description = "The label says it will errode metal";
+            
         }
 
         static void Main(string[] args)
@@ -56,6 +58,10 @@ namespace ZorkTest
                 {
                     currentRoom = Go(currentRoom, commandList[1]);
                 }
+                if (commandList[0] == "LOOK" && commandList[1] == "AT")
+                {
+                    LookAt(commandList[2], currentRoom);
+                }
 
                 else if (command == "QUIT")
                 {
@@ -64,8 +70,34 @@ namespace ZorkTest
                 else
                 {
                     Console.WriteLine("I don't understand.");
-                    Console.WriteLine("Try: " + string.Join(", ", Enum.GetNames(typeof(Actions))) + ", or Quit");
+                    Console.WriteLine("Try: " + string.Join(", ", Enum.GetNames(typeof(Actions))) + "\n");
                 }
+            }
+        }
+
+        static void LookAt(string item, Room currentRoom)
+        {
+            if (currentRoom.Name.ToUpper() == item) // Looking at current room
+            {
+                Console.WriteLine("You look around: " + currentRoom.Description);
+                string exitsText = string.Join(", ", currentRoom.exits.Keys.ToArray());
+                if (string.IsNullOrEmpty(exitsText))
+                {
+                    exitsText = "None";
+                }
+                Console.WriteLine("The exits are to your " + exitsText);
+            }
+            else if (currentRoom.contents.ContainsKey(item)) // Looking at an item inside of current room
+            {
+                Console.WriteLine("You look at the " + currentRoom.contents[item].Name +". " +currentRoom.contents[item].Description);
+            }
+            else if (inventory.ContainsKey(item))
+            {
+                Console.WriteLine("You look at your " + inventory[item].Name + ". " + inventory[item].Description);
+            }
+            else
+            {
+                Console.WriteLine("Theres nothing like that to look at");
             }
         }
 

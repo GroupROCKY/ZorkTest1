@@ -13,7 +13,8 @@ namespace ZorkTest.Entities
 
         public Thing(string Name, string Description)
         {
-
+            this.Name = Name;
+            this.Description = Description;
         }
     }
 }

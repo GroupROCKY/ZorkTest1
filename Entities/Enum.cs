@@ -18,8 +18,10 @@ namespace ZorkTest.Entities
     {
         Go,
         Look,
+        Inspect,
         Use,
         Open,
         Take,
+        Quit
     }
 }
