@@ -14,14 +14,20 @@ namespace ZorkTest.Entities
         West,
     }
 
-    enum Actions
+    // Room Names
+    enum RN
     {
-        Go,
-        Look,
-        Inspect,
-        Use,
-        Open,
-        Take,
-        Quit
+        Main,
+        Living,
+        Second,
+        Cellar
+    }
+
+    // Item Names
+    enum IN
+    {
+        Poison,
+        DoorKey,
+
     }
 }

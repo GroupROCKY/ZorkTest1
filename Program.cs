@@ -10,8 +10,11 @@ namespace ZorkTest
 {
     class Program
     {
-        static Dictionary<string, Room> rooms = new Dictionary<string, Room>();
-        static Dictionary<string, Thing> inventory = new Dictionary<string, Thing>();
+        static Dictionary<string, Thing> superList = new Dictionary<string, Thing>();
+
+
+        static Dictionary<RN, Room> rooms = new Dictionary<RN, Room>();
+        static Dictionary<IN, Thing> inventory = new Dictionary<IN, Thing>();
 
         static void Describe(Room room)
         {
@@ -25,27 +28,30 @@ namespace ZorkTest
 
         static void SetupGame()
         {
-            // Rooms
-            rooms.Add("Start", new Room("Start", "This is the main room."));
-            rooms.Add("First Room", new Room("First Room", "This is the first room."));
-            rooms.Add("Second Room", new Room("Second Room", "This is a Second Room. The door locked behind you."));
+            // Rooms set
+            Room room1 = new Room("Main Room", "This is the main room.");
+            rooms.Add(RN.Main, room1);
+            rooms.Add(RN.Living, new Room("Living Room", "This is the Living room."));
 
-            // Exits
-            rooms["Start"].exits.Add(Direction.East, rooms["First Room"]);
-            rooms["Start"].exits.Add(Direction.West, rooms["Second Room"]);
-            rooms["First Room"].exits.Add(Direction.West, rooms["Start"]);
+            rooms.Add(RN.Second, new Room("Second Room", "This is a Second Room. The door locked behind you."));
+            rooms.Add(RN.Cellar, new Room("Cellar", "This is the cellar."));
 
-            // Contents
-            inventory.Add("POISON", new Item("Poison", "This is poison, it will kill you."));
-            inventory["POISON"].Description = "The label says it will errode metal";
-            rooms["Start"].contents.Add("Second Room Key", new Key("Second Room Key", "It's a key to the Second Room."));
-            
+            // Exits setup
+            rooms[RN.Main].exits.Add(Direction.East, rooms[RN.Living]);
+            rooms[RN.Main].exits.Add(Direction.West, rooms[RN.Second]);
+            rooms[RN.Living].exits.Add(Direction.West, rooms[RN.Main]);
+
+            // Contents setup
+            inventory.Add(IN.Poison, new Item("Poison", "This is poison, it will kill you."));
+            inventory.Add(IN.DoorKey, new Item("Door key", "key to the hall."));
+            // Direct Cast
+            ((Item)inventory[IN.Poison]).Details = "The label says it will errode metal";
         }
 
         static void Main(string[] args)
         {
             SetupGame();
-            Room currentRoom = rooms["Start"];
+            Room currentRoom = rooms[RN.Main];
 
             while (true)
             {
@@ -53,16 +59,15 @@ namespace ZorkTest
                 Console.Write(">");
                 string command = Console.ReadLine().ToUpper();
                 string[] commandList = command.Split(' ');
-
-                if (commandList[0] == "GO" && commandList.Length == 2) // Ex. "go east"
+                if (commandList[0] == "GO" || commandList[0] == "WALK") // Ex. "go east"
                 {
                     currentRoom = Go(currentRoom, commandList[1]);
                 }
-                if (commandList[0] == "LOOK" && commandList[1] == "AT")
+                else if (commandList[0] == "LOOK" || commandList[0] == "CHECK")
                 {
+                    
                     LookAt(commandList[2], currentRoom);
                 }
-
                 else if (command == "QUIT")
                 {
                     return;
@@ -70,30 +75,37 @@ namespace ZorkTest
                 else
                 {
                     Console.WriteLine("I don't understand.");
-                    Console.WriteLine("Try: " + string.Join(", ", Enum.GetNames(typeof(Actions))) + "\n");
+                    //Console.WriteLine("Try: " + string.Join(", ", Enum.GetNames(typeof(Actions))) + "\n");
                 }
             }
         }
 
-        static void LookAt(string item, Room currentRoom)
+        static void LookAt(string command, Room currentRoom)
         {
-            if (currentRoom.Name.ToUpper() == item) // Looking at current room
+            if (Enum.TryParse(command, true, out IN itemName))
             {
-                Console.WriteLine("You look around: " + currentRoom.Description);
-                string exitsText = string.Join(", ", currentRoom.exits.Keys.ToArray());
-                if (string.IsNullOrEmpty(exitsText))
+                if (inventory.TryGetValue(itemName, out Thing item))
                 {
-                    exitsText = "None";
+                    Console.WriteLine("You look at your: " + item.Name);
+                    if (item is Item)
+                    {
+                        if (((Item)item).Details == null)
+                            Console.WriteLine("Its not very interesting.");
+                        else
+                            Console.WriteLine(((Item)item).Details);
+                    }
                 }
-                Console.WriteLine("The exits are to your " + exitsText);
-            }
-            else if (currentRoom.contents.ContainsKey(item)) // Looking at an item inside of current room
-            {
-                Console.WriteLine("You look at the " + currentRoom.contents[item].Name +". " +currentRoom.contents[item].Description);
-            }
-            else if (inventory.ContainsKey(item))
-            {
-                Console.WriteLine("You look at your " + inventory[item].Name + ". " + inventory[item].Description);
+                else if (currentRoom.contents.TryGetValue(itemName, out item))
+                {
+                    Console.WriteLine("You look at the: " + item.Name);
+                    if (item is Item)
+                    {
+                        if (((Item)item).Details == null)
+                            Console.WriteLine("Its not very interesting.");
+                        else
+                            Console.WriteLine(((Item)item).Details);
+                    }
+                }
             }
             else
             {
@@ -117,6 +129,7 @@ namespace ZorkTest
             else
             {
                 Console.WriteLine("I don't understand.");
+                Console.WriteLine("Try: " + string.Join(", ", Enum.GetNames(typeof(Direction))) + "\n");
             }
             return currentRoom;
         }

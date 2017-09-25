@@ -10,14 +10,18 @@ namespace ZorkTest.Entities
     {
         public string Details { get; set; }
 
+        public bool CanBeTaken { get; set; }
+        public string TakeMeText { get; set; }
+
         public Item(string Name, string Description) : base(Name, Description)
         {
 
         }
 
-        public void LookAt()
+        public void MakeTakeable(string TakeMeText)
         {
-            Console.WriteLine(Details);
+            CanBeTaken = true;
+            this.TakeMeText = TakeMeText;
         }
     }
 }

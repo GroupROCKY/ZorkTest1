@@ -10,7 +10,7 @@ namespace ZorkTest.Entities
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public Dictionary<string, Thing> contents = new Dictionary<string, Thing>();
+        public Dictionary<IN, Thing> contents = new Dictionary<IN, Thing>();
 
         public Container(string Name, string Description)
         {

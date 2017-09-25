@@ -12,7 +12,7 @@ namespace ZorkTest.Entities
 
         public Room(string Name, string Description) : base(Name, Description)
         {
-
+            
         }
     }
 }
