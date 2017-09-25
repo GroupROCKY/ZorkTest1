@@ -21,6 +21,7 @@ namespace ZorkTest.Entities
         Living,
         Second,
         Cellar
+      
     }
 
     // Item Names
@@ -28,6 +29,14 @@ namespace ZorkTest.Entities
     {
         Poison,
         DoorKey,
+        LaserGun,
+        BodyArmour,
+        EvilRobotPeng,
+        SmokeBomb,
+        Cage,
+        DiscoBall
+
+
 
     }
 }

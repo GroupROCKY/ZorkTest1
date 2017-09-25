@@ -34,18 +34,41 @@ namespace ZorkTest
             rooms.Add(RN.Living, new Room("Living Room", "This is the Living room."));
 
             rooms.Add(RN.Second, new Room("Second Room", "This is a Second Room. The door locked behind you."));
-            rooms.Add(RN.Cellar, new Room("Cellar", "This is the cellar."));
+            rooms.Add(RN.Cellar, new Room("Cellar aka. Laser Room", "Welcome to the Laser Room. This room is entirely black, windowless, " +
+                "countless neon graffiti drawings all over the walls and hundreds of discoballs hanging from the ceiling. " +
+                "The room is filled with evil robot penguins who are ready to attack you. So beware! "));
 
             // Exits setup
             rooms[RN.Main].exits.Add(Direction.East, rooms[RN.Living]);
             rooms[RN.Main].exits.Add(Direction.West, rooms[RN.Second]);
             rooms[RN.Living].exits.Add(Direction.West, rooms[RN.Main]);
+            rooms[RN.Cellar].exits.Add(Direction.South, rooms[RN.Living]);
 
             // Contents setup
             inventory.Add(IN.Poison, new Item("Poison", "This is poison, it will kill you."));
-            inventory.Add(IN.DoorKey, new Item("Door key", "key to the hall."));
+            inventory.Add(IN.LaserGun, new Item("Laser Gun", "A powerful laser gun that will shoot " +
+                "your opponent down in an instant."));
+            inventory.Add(IN.BodyArmour, new Item("Body Armour", "This is a must have once you've entered " +
+                "this crazy room. Don't let the discoballs decieve you."));
+            inventory.Add(IN.EvilRobotPeng, new Item("Evil Robot Penguins", "Cute on the outside but devilish on the inside. " +
+                "Stay away from these little monsters."));
+            inventory.Add(IN.Cage, new Item("Cage", "The only safe spot in this entire room. I hope your flexibale enough to " +
+                "crawl into it with all your body armour on."));
+            inventory.Add(IN.SmokeBomb, new Item("Smoke Bomb", "Detonates a bomb with lots of thick white smoke."));
+            inventory.Add(IN.DiscoBall, new Item("Disco Balls", "Some of them are hanging loose. Maybe they can be used as a weapon?"));
+
+
+
+
             // Direct Cast
             ((Item)inventory[IN.Poison]).Details = "The label says it will errode metal";
+            ((Item)inventory[IN.LaserGun]).Details = "You have limited amunition though so use it wisely.";
+            ((Item)inventory[IN.BodyArmour]).Details = "You are not safe here, so gear up solider!";
+            ((Item)inventory[IN.EvilRobotPeng]).Details = "They'll bite your finger off if you get too close.";
+            ((Item)inventory[IN.SmokeBomb]).Details = "This smoke bomb will give you about 15 seconds of distraction. Use it wisely.";
+
+
+
         }
 
         static void Main(string[] args)
@@ -86,22 +109,22 @@ namespace ZorkTest
             {
                 if (inventory.TryGetValue(itemName, out Thing item))
                 {
-                    Console.WriteLine("You look at your: " + item.Name);
+                    Console.WriteLine("You're looking at your: " + item.Name);
                     if (item is Item)
                     {
                         if (((Item)item).Details == null)
-                            Console.WriteLine("Its not very interesting.");
+                            Console.WriteLine("It's not very interesting.");
                         else
                             Console.WriteLine(((Item)item).Details);
                     }
                 }
                 else if (currentRoom.contents.TryGetValue(itemName, out item))
                 {
-                    Console.WriteLine("You look at the: " + item.Name);
+                    Console.WriteLine("You're looking at the: " + item.Name);
                     if (item is Item)
                     {
                         if (((Item)item).Details == null)
-                            Console.WriteLine("Its not very interesting.");
+                            Console.WriteLine("It's not very interesting.");
                         else
                             Console.WriteLine(((Item)item).Details);
                     }
@@ -109,7 +132,7 @@ namespace ZorkTest
             }
             else
             {
-                Console.WriteLine("Theres nothing like that to look at");
+                Console.WriteLine("There's nothing like that to look at");
             }
         }
 
